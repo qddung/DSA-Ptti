@@ -37,6 +37,10 @@ void SapXepTheoTen(PTR head, int size)
 				start->sv = temp2;
 				start->lk2->sv = temp1;
 			}
+			else if (temp1.ho > temp2.ho) {
+				start->sv = temp2;
+				start->lk2->sv = temp1;
+			}
 			start = start->lk2;
 		}
 	}
