@@ -18,8 +18,44 @@ typedef node* PTR;
 void insertStudent(PTR& head, Sinhvien sv);
 void deleteStudent(PTR& head, int maso);
 PTR searchStudent(PTR head, int maso);
-void displayByID(PTR head);
-void saveToFile(PTR head, const char* filename);
+void displayByStudent(PTR head);
+
+void SapXepTheoTen(PTR head, int size);
+
+void SapXepTheoMaSv(PTR head, int size);
+
+int studentNumber = 0;
+
+void SapXepTheoTen(PTR head, int size)
+{
+	for (int step = 0; step < size - 1; ++step) {
+		PTR start = head;
+		for (int i = 0; i < size - step - 1; ++i) {
+			Sinhvien temp1 = start->sv;
+			Sinhvien temp2 = start->lk2->sv;
+			if (temp1.ten > temp2.ten) {
+				start->sv = temp2;
+				start->lk2->sv = temp1;
+			}
+			start = start->lk2;
+		}
+	}
+}
+
+void SapXepTheoMaSv(PTR head, int size) {
+	for (int step = 0; step < size - 1; ++step) {
+		PTR start = head;
+		for (int i = 0; i < size - step - 1; ++i) {
+			Sinhvien temp1 = start->sv;
+			Sinhvien temp2 = start->lk2->sv;
+			if (temp1.maso > temp2.maso) {
+				start->sv = temp2;
+				start->lk2->sv = temp1;
+			}
+			start = start->lk2;
+		}
+	}
+}
 
 int main() {
 	PTR head = nullptr;
@@ -28,8 +64,8 @@ int main() {
 		cout << "\n1. Nhap danh sach sinh vien";
 		cout << "\n2. Xoa sinh vien theo ma so";
 		cout << "\n3. Tim sinh vien theo ma so";
-		cout << "\n4. Liet ke DSSV theo ma so";
-		cout << "\n5. Luu danh sach vao file";
+		cout << "\n4. Liet ke DSSV tang dan theo ma so";
+		cout << "\n5. Liet ke DSSV tang dan theo ten";
 		cout << "\n6. Ket thuc";
 		cout << "\nChon chuc nang: ";
 		cin >> choice;
@@ -67,11 +103,12 @@ int main() {
 			break;
 		}
 		case 4:
-			displayByID(head);
+			SapXepTheoMaSv(head, studentNumber);
+			displayByStudent(head);
 			break;
 		case 5:
-			saveToFile(head, "danhsach_sv.txt");
-			cout << "Da luu danh sach vao file danhsach_sv.txt\n";
+			SapXepTheoTen(head, studentNumber);
+			displayByStudent(head);
 			break;
 		}
 	} while (choice != 6);
@@ -96,9 +133,11 @@ void insertStudent(PTR& head, Sinhvien sv) {
 		p->lk2 = newNode;
 		newNode->lk1 = p;
 	}
+	studentNumber++;
 }
 
 void deleteStudent(PTR& head, int maso) {
+	if (studentNumber == 0) return;
 	PTR p = head;
 	while (p && p->sv.maso != maso) {
 		p = p->lk2;
@@ -110,6 +149,7 @@ void deleteStudent(PTR& head, int maso) {
 	p->lk1 = nullptr;
 	p->lk2 = nullptr;
 	delete p;
+	studentNumber--;
 }
 
 PTR searchStudent(PTR head, int maso) {
@@ -119,22 +159,10 @@ PTR searchStudent(PTR head, int maso) {
 	return head;
 }
 
-void displayByID(PTR head) {
+void displayByStudent(PTR head) {
 	while (head) {
 		cout << head->sv.maso << ": " << head->sv.ho << " " << head->sv.ten << "\n";
 		head = head->lk2;
 	}
 }
 
-void saveToFile(PTR head, const char* filename) {
-	ofstream file(filename);
-	if (!file) {
-		cout << "Khong the mo file de ghi!\n";
-		return;
-	}
-	while (head) {
-		file << head->sv.maso << "," << head->sv.ho << "," << head->sv.ten << "\n";
-		head = head->lk2;
-	}
-	file.close();
-}
