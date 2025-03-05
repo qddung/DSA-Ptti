@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstring>
 #include <fstream>
 using namespace std;
@@ -18,6 +18,7 @@ typedef node* PTR;
 void insertStudent(PTR& head, Sinhvien sv);
 void deleteStudent(PTR& head, int maso);
 PTR searchStudent(PTR head, int maso);
+bool checkMaSoSinhVien(PTR head, int maso);
 void displayByStudent(PTR head);
 
 void SapXepTheoTen(PTR head, int size);
@@ -26,22 +27,43 @@ void SapXepTheoMaSv(PTR head, int size);
 
 int studentNumber = 0;
 
+int strcmp_more(char* s, char* t) {
+	int len1 = strlen(s), len2 = strlen(t);
+	int min_len = len1 < len2 ? len1 : len2;
+	for (int i = 0; i < min_len; i++) {
+		if (s[i] != t[i]) {
+			if (s[i] > t[i])
+				return 1;
+			else
+				return -1;
+		}
+	}
+	if (len1 < len2)
+		return -1;
+	else if (len1 > len2)
+		return 1;
+	else
+		return 0;
+}
+
+
+
 void SapXepTheoTen(PTR head, int size)
 {
 	for (int step = 0; step < size - 1; ++step) {
-		PTR start = head;
+		PTR ptr = head;
 		for (int i = 0; i < size - step - 1; ++i) {
-			Sinhvien temp1 = start->sv;
-			Sinhvien temp2 = start->lk2->sv;
-			if (temp1.ten > temp2.ten) {
-				start->sv = temp2;
-				start->lk2->sv = temp1;
+			Sinhvien temp1 = ptr->sv;
+			Sinhvien temp2 = ptr->lk2->sv;
+			if (strcmp_more(temp1.ten, temp2.ten)) {
+				ptr->sv = temp2;
+				ptr->lk2->sv = temp1;
 			}
-			else if (temp1.ho > temp2.ho) {
-				start->sv = temp2;
-				start->lk2->sv = temp1;
+			else if (strcmp_more(temp1.ho, temp2.ho)) {
+				ptr->sv = temp2;
+				ptr->lk2->sv = temp1;
 			}
-			start = start->lk2;
+			ptr = ptr->lk2;
 		}
 	}
 }
@@ -77,12 +99,22 @@ int main() {
 		switch (choice) {
 		case 1: {
 			Sinhvien sv;
-			do {
-				cout << "Nhap ma so: "; cin >> sv.maso;
-				if (searchStudent(head, sv.maso)) {
+			cout << "Nhap ma so: ";
+			bool check = false;
+			while (!check) {
+				cin >> sv.maso;
+				if (sv.maso == 0) {
+					cout << "Chưa nhập mã số.\n";
+				}
+				else if (!checkMaSoSinhVien(head, sv.maso)) {
 					cout << "Ma so da ton tai! Vui long nhap ma khac.\n";
 				}
-			} while (searchStudent(head, sv.maso));
+				else {
+					check = true;
+				}
+			}
+
+			cin.ignore();
 			cout << "Nhap ho: "; cin.ignore(); cin.getline(sv.ho, 51);
 			cout << "Nhap ten: "; cin.getline(sv.ten, 11);
 			insertStudent(head, sv);
@@ -161,6 +193,10 @@ PTR searchStudent(PTR head, int maso) {
 		head = head->lk2;
 	}
 	return head;
+}
+
+bool checkMaSoSinhVien(PTR head, int maso) {
+	return searchStudent(head, maso) == nullptr;
 }
 
 void displayByStudent(PTR head) {
