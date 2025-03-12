@@ -189,9 +189,10 @@ void deleteStudent(PTR& head, int maso) {
 }
 
 PTR searchStudent(PTR head, int maso) {
-	while (head && head->sv.maso != maso) {
+	while (head && head->sv.maso < maso) {
 		head = head->lk2;
 	}
+	if (head && head->sv.maso != maso) return nullptr;
 	return head;
 }
 
